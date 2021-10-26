@@ -1,0 +1,27 @@
+{
+  "name": "protractor",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prestart-webdriver": "webdriver-manager update",
+    "start-webdriver": "webdriver-manager start",
+    "build": "./node_modules/.bin/tsc",
+    "test": "./node_modules/.bin/protractor protractor.conf.js",
+    "test2": "/usr/src/app/node_modules/.bin/protractor protractor.conf.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^16.11.4",
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^7.3.1",
+    "chai": "^4.3.4",
+    "cucumber-html-reporter": "^5.5.0",
+    "protractor": "7.0.0",
+    "protractor-cucumber-framework": "^8.2.6",
+    "typescript": "^4.4.4"
+  }
+}
