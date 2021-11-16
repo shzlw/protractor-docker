@@ -1,0 +1,84 @@
+<html>
+<head>
+
+</head>
+<body>
+<div>
+  <button onclick="run()">Run</button>
+  <button onclick="report()">Report</button>
+</div>
+<div style="display: flex;">
+  <div style="border: 1px solid green; min-width: 400px;">
+    <h2>WebSocket</h2>
+    <div id="ws-data">
+    </div>
+  </div>
+  <div style="border: 1px solid red; min-width: 400px;">
+    <h2>Pull</h2>
+    <div id="pull-data">
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Generate id from client side
+const id = getId();
+
+const ws = new WebSocket("ws://localhost:8090");
+      
+ws.onopen = function() {
+  // Open the WS connectin first then call to submit the work
+  ws.send(id);
+  console.log("onopen");
+  
+};
+
+ws.onmessage = function (evt) { 
+  const data = evt.data;
+  console.log("onmessage", data);
+  const obj = JSON.parse(data);
+  const $wsData = document.getElementById("ws-data");
+  const $row = document.createElement("div");
+  $row.innerHTML = obj.createdTime + "," + obj.type + "," + obj.value + "<br/>";
+  $wsData.append($row);
+};
+
+ws.onclose = function() { 
+  console.log("close");
+};
+
+function run() {
+  const $pullData = document.getElementById("pull-data");
+
+  fetch("/spawn?id=" + id)
+    .then(response => {
+      console.log("response", response);
+      setInterval(() => {
+        fetch("/report?id=" + id)
+          .then(response => response.json())
+          .then(data => {
+            let d = "";
+            for (let i = 0; i < data.length; i++) {
+              d += data[i].createdTime + "," + data[i].type + "," + data[i].value + "<br/>";
+            }
+            $pullData.innerHTML = d;
+          });
+      }, 1000);
+    });
+}
+
+function report() {
+  const reportUrl = `/static/${id}/cucumber_report.html`;
+  window.open(reportUrl, '_blank').focus();
+}
+
+function getId() {
+  let r = (Math.random() + 1).toString(36).substring(7);
+  return r;
+}
+
+
+</script>
+</body>
+</html>

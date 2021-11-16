@@ -1,12 +1,14 @@
 const {Given, When, Then} = require('@cucumber/cucumber');
 const { browser, element, by } = require('protractor');  
 const { expect } = require('chai');
+const fs = require('fs');
 
 Given('The calculator is open', function () {
   // Write code here that turns the phrase above into concrete actions
   browser.waitForAngularEnabled(false);
 
   browser.get('http://juliemr.github.io/protractor-demo/');
+
 });
 
 When('I calculate {int} {float} {int}', function (int, float, int2) {
