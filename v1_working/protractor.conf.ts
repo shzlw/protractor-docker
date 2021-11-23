@@ -1,13 +1,34 @@
-import {Config} from 'protractor';
+import { Config } from 'protractor';
 import * as reporter from "cucumber-html-reporter"
 
-export let config: Config = {
+function findId() {
+  const ID_ARG = "--params.id";
+  const args = process.argv;
+  let idIndex = args.findIndex(p => p.includes(ID_ARG));
+  if (idIndex !== -1) {
+    const idArg = args[idIndex];
+    const index = idArg.indexOf("=");
+    if (index !== -1) {
+      return idArg.substring(index + 1);
+    }
+  }
 
+  return "";
+}
+
+// Get the id from arguments. The format is --params.id=123
+const id = findId();
+const cucumberJsonFile = `./cucumber_json_${id}.json`;
+
+export let config: Config = {
   // seleniumAddress: 'http://localhost:4444/wd/hub',
   directConnect: true,  
   getPageTimeout: 60000,  
   allScriptsTimeout: 500000, 
   // baseUrl: 'https://angularjs.org/',
+
+  // maxSessions: 1,
+
 
   capabilities: {
       // browserName: "firefox",
@@ -46,15 +67,17 @@ export let config: Config = {
     // strict: true,                  // <boolean> fail if there are any undefined or pending steps
     // format: ["pretty"],            // <string[]> (type[:path]) specify the output format, optionally supply PATH to redirect formatter output (repeatable)
     // 'dry-run': false,              // <boolean> invoke formatters without executing steps
-    format: 'json:cucumber_report.json',
+    format: `json:${cucumberJsonFile}`,
     compiler: []                   // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
   },
   onComplete: () => {
     const id = browser.params.id;
+
+
     console.log('onComplete', id);
     const options: reporter.Options = {    
       theme: 'bootstrap',    
-      jsonFile: './cucumber_report.json',    
+      jsonFile: `${cucumberJsonFile}`,    
       output: `./public/${id}/cucumber_report.html`,    
       reportSuiteAsScenarios: true,    
       scenarioTimestamp: true,    
